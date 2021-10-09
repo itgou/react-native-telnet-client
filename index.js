@@ -13,6 +13,7 @@ class Telnet extends events.EventEmitter {
 
 		this.socket = null;
 		this.state = null;
+		this.connected = false;
 	}
 
 	connect(opts) {
@@ -96,10 +97,14 @@ class Telnet extends events.EventEmitter {
 						this.emit("error", "Cannot connect");
 					}
 
+					this.connected = false
+					this.socket.writable = false
 					this.socket.destroy();
 					return reject(new Error("Cannot connect"));
 				}
 				this.emit("timeout");
+				this.connected = false
+				this.socket.writable = false
 				return reject(new Error("timeout"));
 			});
 
@@ -115,19 +120,22 @@ class Telnet extends events.EventEmitter {
 
 			this.socket.on("error", (error) => {
 				if (this.listeners("error").length > 0) this.emit("error", error);
-
+				this.connected = false
+				this.socket.writable = false
 				if (promise.isPending()) reject(error);
 			});
 
 			this.socket.on("end", () => {
 				this.emit("end");
-
+				this.connected = false;
+				this.socket.writable = false
 				if (promise.isPending()) reject(new Error("Socket ends"));
 			});
 
 			this.socket.on("close", () => {
 				this.emit("close");
-
+				this.connected = false
+				this.socket.writable = false
 				if (promise.isPending()) reject(new Error("Socket closes"));
 			});
 		}));
@@ -326,7 +334,7 @@ class Telnet extends events.EventEmitter {
 				this.loginPromptReceived = false;
 
 				this.emit("ready", this.shellPrompt);
-
+				this.connected = true
 				if (callback) callback("ready", this.shellPrompt);
 			} else {
 				return;
