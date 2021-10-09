@@ -1,13 +1,15 @@
 {
 	"name": "react-native-telnet-client",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [
-		"react-native"
+		"react-native",
+		"telnet",
+		"telnet-client"
 	],
 	"dependencies": {
 		"bluebird": "^3.7.2",
